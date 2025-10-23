@@ -1,6 +1,6 @@
 from typing import List
-from environment.helper import get_grid_index_for_location
-from environment.cell import Cell
+from ..environment.helper import get_grid_index_for_location
+from ..environment.cell import Cell
 
 direct_neighbours = [
     {"x": -1, "y": 0},

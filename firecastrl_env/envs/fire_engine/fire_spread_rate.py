@@ -1,11 +1,9 @@
 import math
 from typing import Dict
-# from tactix.utils.math_utils import dist, get_direction_factor
 from dataclasses import dataclass
-from environment.enums import VegetationType
-# Vector simulation
-from environment.vector import Vector2
-from environment.cell import Cell
+from ..environment.enums import VegetationType
+from ..environment.vector import Vector2
+from ..environment.cell import Cell
 
 @dataclass
 class CellProps:

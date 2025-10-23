@@ -3,14 +3,14 @@ import gymnasium as gym
 from gymnasium import spaces
 import time
 import numpy as np
-import config
-from environment.cell import Cell
-from fire_engine.fire_engine import FireEngine
-from environment.vector import Vector2
-from environment.wind import Wind
-from environment.zone import Zone
-from environment.enums import FireState
-import environment.helper as helper
+from . import config
+from .environment.cell import Cell
+from .fire_engine.fire_engine import FireEngine
+from .environment.vector import Vector2
+from .environment.wind import Wind
+from .environment.zone import Zone
+from .environment.enums import FireState
+from .environment import helper as helper
 import traceback
 import math
 

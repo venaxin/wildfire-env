@@ -1,5 +1,5 @@
 from copy import deepcopy
-from environment.enums import VegetationType, TerrainType, DroughtLevel
+from ..environment.enums import VegetationType, TerrainType, DroughtLevel
 
 class Zone:
     def __init__(self, vegetation=VegetationType.Barren, terrainType=TerrainType.Plains, droughtLevel=DroughtLevel.MildDrought):

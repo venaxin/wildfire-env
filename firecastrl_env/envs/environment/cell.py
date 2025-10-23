@@ -1,7 +1,7 @@
 from typing import Optional,Dict, List
 import math
-from environment.enums import VegetationType, DroughtLevel, BurnIndex, FireState  
-from environment.zone import Zone
+from ..environment.enums import VegetationType, DroughtLevel, BurnIndex, FireState  
+from ..environment.zone import Zone
 
 
 FIRE_LINE_DEPTH = 2000

@@ -6,9 +6,9 @@ from io import BytesIO
 from typing import List, Optional, Dict, Any
 from typing import List
 import numpy as np
-from environment.enums import BurnIndex,FireState
-import config
-from environment.cell import Cell
+from ..environment.enums import BurnIndex,FireState
+from .. import config
+from ..environment.cell import Cell
 import os
 
 def populate_grid(width: int, height: int, image: List[List[float]], interpolate: bool = False) -> List[float]:

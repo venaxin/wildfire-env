@@ -1,15 +1,5 @@
 from enum import Enum
 
-class FireState:
-    Unburnt = 0
-    Burning = 1
-    Burnt = 2
-
-class BurnIndex:
-    Low = 0
-    Medium = 1
-    High = 2
-
 class DroughtLevel(Enum):
     NoDrought = 0
     MildDrought = 1

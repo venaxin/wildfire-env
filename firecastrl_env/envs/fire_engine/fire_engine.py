@@ -1,13 +1,13 @@
-import config
+from .. import config
 import math
 import random
 from typing import List, Dict, Callable
-from environment.vector import Vector2
-from environment.cell import Cell
-from environment.enums import BurnIndex,FireState
-from fire_engine.utils import dist, within_dist, get_grid_index_for_location, for_each_point_between, get_grid_cell_neighbors
-from fire_engine.fire_spread_rate import get_fire_spread_rate
-from environment.wind import Wind
+from ..environment.vector import Vector2
+from ..environment.cell import Cell
+from ..environment.enums import BurnIndex,FireState
+from .utils import dist, within_dist, get_grid_index_for_location, for_each_point_between, get_grid_cell_neighbors
+from .fire_spread_rate import get_fire_spread_rate
+from ..environment.wind import Wind
 
 model_day = 1440  # minutes
 rng = random.Random("inferno-tactics")
