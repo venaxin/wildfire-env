@@ -46,6 +46,13 @@ class SanitizeObs(ObservationWrapper):
         return {'cells': cells, 'helicopter_coord': hc, 'quenched_cells': qc}
 
 
+def _denorm_heli_xy(hc_norm: np.ndarray) -> tuple[int, int]:
+    """Convert normalized [x/239, y/159] back to pixel indices."""
+    x = int(np.clip(round(float(hc_norm[0]) * 239.0), 0, 239))
+    y = int(np.clip(round(float(hc_norm[1]) * 159.0), 0, 159))
+    return x, y
+
+
 def main():
     parser = argparse.ArgumentParser(description="Quick smoke test for firecastrl-env")
     parser.add_argument("--steps", type=int, default=1000, help="Max steps to run")
@@ -92,7 +99,7 @@ def main():
         im = ax.imshow(arr, origin="upper", cmap=cmap, vmin=vmin, vmax=vmax, interpolation="nearest")
         cb = fig.colorbar(im, ax=ax, fraction=0.046, pad=0.04)
         cb.set_label("Ignition (normalized)")
-        hx, hy = int(obs["helicopter_coord"][0]), int(obs["helicopter_coord"][1])
+        hx, hy = _denorm_heli_xy(np.array(obs["helicopter_coord"], dtype=np.float32))
         heli = ax.scatter([hx], [hy], c="#00ffff", s=20, marker="x", linewidths=1.2, label="helicopter")
         ax.set_title("Ignition Times (NaN = not scheduled)")
         ax.set_xlabel("x (cols)")
@@ -111,7 +118,7 @@ def main():
                 print(f"t={t+1} action={action} reward={reward:.3f} terminated={terminated} truncated={truncated}")
             arr = np.array(obs["cells"], dtype=np.float32)
             im.set_data(arr)
-            hx, hy = int(obs["helicopter_coord"][0]), int(obs["helicopter_coord"][1])
+            hx, hy = _denorm_heli_xy(np.array(obs["helicopter_coord"], dtype=np.float32))
             heli.set_offsets([[hx, hy]])
             ax.set_title(f"Ignition Times — step {t+1}  reward {reward:.3f}")
             plt.pause(0.001)
@@ -132,7 +139,7 @@ def main():
             if args.render:
                 arr = np.array(obs["cells"], dtype=np.float32)
                 im.set_data(arr)
-                hx, hy = int(obs["helicopter_coord"][0]), int(obs["helicopter_coord"][1])
+                hx, hy = _denorm_heli_xy(np.array(obs["helicopter_coord"], dtype=np.float32))
                 heli.set_offsets([[hx, hy]])
                 ax.set_title(f"Ignition Times — step {steps_run}  reward {reward:.3f}")
                 plt.pause(0.001)
