@@ -193,7 +193,6 @@ ignition_times = lambda cells, w, h: np.array(
 ).reshape(h, w)
 
 def perform_helitack(cells : List[Cell],array_x: int, array_y: int) -> int:
-    print(f"Helitack coordinates: ({array_x}, {array_y})")
 
     start_grid_x = array_x
     start_grid_y = array_y

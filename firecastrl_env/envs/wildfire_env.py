@@ -3,6 +3,8 @@ import gymnasium as gym
 from gymnasium import spaces
 import math
 from typing import Optional, Tuple, Dict, Any
+import warnings
+warnings.filterwarnings("ignore", category=UserWarning, module="pygame.pkgdata")
 
 from . import config
 from .environment.cell import Cell
