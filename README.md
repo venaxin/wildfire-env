@@ -23,10 +23,10 @@ A **Gymnasium-compatible** wildfire simulation environment with physics-informed
 ## Environment Screenshots
 
 ### Early Fire Spread
-![Early Fire Spread](docs/screenshot_early.png)
+![Early Fire Spread](https://github.com/aisystems-lab/wildfire-env/blob/434305ce1b992c2cfd5f8c7818e5d475a1fb8642/docs/screenshot_early.png)
 
 ### Active Firefighting Operations
-![Active Firefighting](docs/screenshot_active.png)
+![Active Firefighting](https://github.com/aisystems-lab/wildfire-env/blob/434305ce1b992c2cfd5f8c7818e5d475a1fb8642/docs/screenshot_active.png)
 
 **Legend:**
 - **Dark Blue** = Water/non-burnable areas
@@ -393,7 +393,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-## 📧 Contact
+## Contact
 
 **Shreyas Bellary Manjunath** - sbellary@buffalo.edu  
 **Shaurya Mathur** - smathur4@buffalo.edu
