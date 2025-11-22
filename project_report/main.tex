@@ -1,12 +1,13 @@
 \documentclass[11pt]{article}
 \usepackage[utf8]{inputenc}
+\usepackage{amsmath}
 \usepackage{geometry}
 \usepackage{graphicx}
 \usepackage{float}
 \usepackage{caption}
 \usepackage{subcaption}
-\usepackage{booktabs} % For nicer tables
-\usepackage{amsmath}
+\usepackage{booktabs} 
+\usepackage{hyperref}
 
 \geometry{a4paper, margin=1in}
 
@@ -23,86 +24,85 @@
 \maketitle
 
 \begin{abstract}
-In Multi-Agent Reinforcement Learning (MARL) for disaster response, it is often assumed that penalizing agents for the global state of the disaster (e.g., total fire size) is necessary to induce cooperative behavior. We investigated this by training a squad of 3 helicopters in the FirecastRL environment using two distinct reward structures: \textit{Cooperative} (Global Penalty) and \textit{Greedy} (Local Reward only). Contrary to our initial hypothesis, the Greedy agents significantly outperformed the Cooperative agents, reducing the average burnt area by $\approx 39\%$ and extinguishing the fire $\approx 40\%$ faster. This result suggests that in high-dimensional spatial environments, dense local feedback is a more effective learning signal than sparse global objectives.
+In Multi-Agent Reinforcement Learning (MARL) for disaster response, it is often assumed that penalizing agents for the global state of the disaster (e.g., total fire size) is necessary to induce cooperative behavior. We investigated this by training a squad of 3 helicopters in the FirecastRL environment using three distinct reward structures: \textit{Cooperative} (Global Penalty), \textit{Greedy} (Local Reward only), and \textit{Curriculum} (Gradual transition). Contrary to the standard hypothesis, the Greedy agents significantly outperformed the Cooperative agents, reducing the average burnt area by $\approx 14\%$. However, the Greedy approach exhibited high variance. The Curriculum Learning approach successfully bridged the gap, offering a balance between performance and stability. This result suggests that in high-dimensional spatial environments, dense local feedback is a more effective learning signal than sparse global objectives.
 \end{abstract}
 
 \section{Introduction}
-Wildfire suppression is a race against time. While single-agent RL has shown promise, it struggles to cover large geographical areas. This project explores scaling to multi-agent systems. The core challenge in MARL is reward shaping: how do we encourage agents to work together? We tested the hypothesis that agents sharing a global penalty for fire spread would learn superior containment strategies compared to agents acting purely on self-interest (maximizing individual drops).
+Wildfire suppression is a race against time. While single-agent RL has shown promise, it struggles to cover large geographical areas. This project explores scaling to multi-agent systems ($N=3$). The core challenge in MARL is reward shaping: how do we encourage agents to work together? We tested the hypothesis that agents sharing a global penalty for fire spread would learn superior containment strategies compared to agents acting purely on self-interest.
 
 \section{Methodology}
-\subsection{Environment and Agent Setup}
-We modified the \texttt{FirecastRL} environment to support $N=3$ agents controlled by a centralized PPO policy. The state space includes a $160 \times 240$ grid of fire ignition times and the coordinates of all agents. The action space is a \texttt{MultiDiscrete} vector allowing simultaneous control of all helicopters.
+\subsection{Environment Setup}
+We utilized the \texttt{FirecastRL} environment modified to support multiple agents controlled by a centralized PPO policy (Stable-Baselines3). The state space includes a $160 \times 240$ grid of fire ignition times and agent coordinates. The action space is a \texttt{MultiDiscrete} vector.
 
-\subsection{Reward Functions}
-We trained two distinct models for 100,000 timesteps each:
-\begin{itemize}
-    \item \textbf{Cooperative Agent:} Received +10 for extinguishing a cell, -2 for wasting water, and a continuous penalty of $-0.1 \times (\text{Total Burning Cells})$. This penalty was intended to create urgency regarding the fire's spread.
-    \item \textbf{Greedy Agent:} Received +10 for extinguishing and -2 for wasting water. Crucially, this agent received \textbf{zero penalty} for the fire spreading. It only cared about its own successful hits.
-\end{itemize}
+\subsection{Experimental Conditions}
+We trained three models for 100,000 timesteps each:
+\begin{enumerate}
+    \item \textbf{Cooperative Agent:} Received +10 for extinguishing, -2 for wasting water, and a global penalty of $-0.1 \times (\text{Total Burning Cells})$.
+    \item \textbf{Greedy Agent:} Received +10 for extinguishing and -2 for wasting water. \textbf{Zero penalty} for fire spread. Agents only maximize individual hits.
+    \item \textbf{Curriculum Agent:} Started with Greedy rewards to learn basic mechanics, linearly transitioning to Cooperative rewards over time.
+\end{enumerate}
 
 \section{Results}
-We evaluated both models over 10 deterministic episodes. The results refuted our initial hypothesis.
+We evaluated all models over 10 deterministic episodes. The Greedy strategy surprisingly yielded the lowest average damage.
 
 \begin{table}[h]
 \centering
 \begin{tabular}{|l|c|c|c|}
 \hline
-\textbf{Strategy} & \textbf{Avg Cells Burnt} ($\downarrow$) & \textbf{Avg Steps to Finish} ($\downarrow$) & \textbf{Reliability (Std Dev)} \\ \hline
-Cooperative & 1600.90 & 728.1 & 61.04 \\ \hline
-\textbf{Greedy} & \textbf{973.60} & \textbf{432.1} & 510.92 \\ \hline
+\textbf{Strategy} & \textbf{Avg Cells Burnt} ($\downarrow$) & \textbf{Reliability (Std Dev)} & \textbf{Avg Quenched} \\ \hline
+Cooperative & 1449.8 & 172.01 & 0.0 (Failed containment) \\ \hline
+\textbf{Greedy} & \textbf{1243.4} & 440.78 & 0.0 (Full containment) \\ \hline
+Curriculum & 1297.3 & 399.12 & 0.0 (Full containment) \\ \hline
 \end{tabular}
-\caption{Comparative performance statistics. The Greedy agent saved significantly more forest.}
+\caption{Comparative performance statistics. The Greedy agent saved the most forest on average.}
 \end{table}
 
 \subsection{Analysis of Damage (Final Impact)}
-As shown in Figure 1, the Cooperative agent consistently converged to a sub-optimal solution (high damage), whereas the Greedy agent achieved a much lower median damage.
+As shown in Figure \ref{fig:damage}, the Cooperative agent converged to a sub-optimal solution (high damage), whereas the Greedy agent achieved a lower median damage. The Curriculum agent performed comparably to Greedy but with slightly lower variance.
 
 \begin{figure}[H]
     \centering
-    % Plot 1: Box Plot
-    \includegraphics[width=0.8\textwidth]{plot_damage_comparison.png}
-    \caption{\textbf{Total Fire Damage.} The Box Plot illustrates that the Greedy strategy (Orange) consistently resulted in fewer burnt cells compared to the Cooperative strategy (Green/Blue).}
+    % Requires: all_plot_damage.png
+    \includegraphics[width=0.9\textwidth]{all_plot_damage.png}
+    \caption{\textbf{Total Fire Damage.} The boxplot illustrates that the Greedy strategy (Orange) and Curriculum (Green) consistently resulted in fewer burnt cells compared to the Cooperative strategy (Blue).}
+    \label{fig:damage}
 \end{figure}
 
 \subsection{Suppression Dynamics (Speed)}
-To understand \textit{how} the Greedy agents achieved lower damage, we analyzed the fire size over time. Figure 2 shows that Greedy agents aggressively reduce the active fire count early in the episode, whereas Cooperative agents allow the fire to linger, leading to runaway spread.
+Figure \ref{fig:speed} analyzes the active fire size over time. The Greedy and Curriculum agents show a steeper downward slope in active fire cells, indicating a faster reaction time compared to the hesitant Cooperative agents.
 
 \begin{figure}[H]
     \centering
-    % Plot 2: Line Plot
-    \includegraphics[width=0.8\textwidth]{plot_containment_speed.png}
-    \caption{\textbf{Containment Trajectory.} The Greedy agent (Orange Dashed) creates a steeper drop in active fire cells, extinguishing the fire significantly faster than the Cooperative agent.}
+    % Requires: all_plot_speed.png
+    \includegraphics[width=0.9\textwidth]{all_plot_speed.png}
+    \caption{\textbf{Containment Trajectory.} Greedy and Curriculum agents extinguish the fire significantly faster.}
+    \label{fig:speed}
 \end{figure}
 
-\subsection{Efficiency Analysis}
-We examined the trade-off between episode duration and total damage. Figure 3 reveals a clear cluster of Greedy episodes in the bottom-left corner (Short Duration, Low Damage), indicating that "rushing" to score points actually resulted in better conservation of the environment.
+\subsection{Efficiency and Risk}
+We examined the trade-off between episode duration and damage (Figure \ref{fig:efficiency}) and the probability distribution of outcomes (Figure \ref{fig:risk}).
 
 \begin{figure}[H]
     \centering
-    % Plot 3: Scatter Plot
-    \includegraphics[width=0.8\textwidth]{plot_scatter_efficiency.png}
-    \caption{\textbf{Efficiency Scatter Plot.} There is a strong correlation between speed and quality. The Greedy agents do not sacrifice accuracy for speed; they achieve both.}
+    \begin{subfigure}[b]{0.48\textwidth}
+        % Requires: plot_efficiency.png
+        \includegraphics[width=\textwidth]{plot_efficiency.png}
+        \caption{Efficiency Scatter Plot}
+        \label{fig:efficiency}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.48\textwidth}
+        % Requires: plot_risk.png
+        \includegraphics[width=\textwidth]{plot_risk.png}
+        \caption{Risk Density Profile}
+        \label{fig:risk}
+    \end{subfigure}
+    \caption{Efficiency and Risk analysis showing Greedy agents clustering in the low-damage/fast-duration region.}
 \end{figure}
 
-\subsection{Risk Profile}
-Finally, we analyzed the probability distribution of outcomes. Figure 4 shows that while the Cooperative agent is highly consistent (narrow peak), it is consistently \textit{bad}. The Greedy agent has a wider variance but its probability mass is shifted significantly towards lower damage outcomes.
-
-\begin{figure}[H]
-    \centering
-    % Plot 4: KDE / Risk Plot
-    \includegraphics[width=0.8\textwidth]{plot_risk_density.png}
-    \caption{\textbf{Risk Density Profile.} The Greedy distribution is left-shifted, indicating a higher probability of saving more trees, despite higher variance.}
-\end{figure}
-
-\section{Discussion: Why did Cooperation Fail?}
-The failure of the Cooperative reward can be attributed to the \textbf{Signal-to-Noise Ratio}. 
-\begin{enumerate}
-    \item \textbf{Noisy Global Signal:} The global penalty ($-0.1 \times \text{Fire}$) fluctuates based on wind and physics, not just agent actions. This created "noise" that made it difficult for the PPO algorithm to credit specific actions.
-    \item \textbf{Learned Helplessness:} If the fire grew large early in the episode, the Cooperative agent accumulated massive negative rewards regardless of its actions, potentially leading to a local optimum where it ceased aggressive behavior.
-    \item \textbf{Direct Feedback:} The Greedy agent received a clean, dense signal: "I went to the red pixel, I dropped water, I got points." This direct cause-and-effect loop was easier to learn within the limited training window.
-\end{enumerate}
+\section{Discussion}
+The failure of the Cooperative reward can be attributed to the \textbf{Signal-to-Noise Ratio}. The global penalty created too much noise for the agents to credit specific actions. The Greedy agent received a clean, dense signal ("I dropped water $\to$ I got points"), creating a direct cause-and-effect loop that was easier to learn. The Curriculum approach successfully utilized this by establishing basic competence before introducing global complexity.
 
 \section{Conclusion}
-This study demonstrates that in MARL applications for wildfire suppression, \textbf{dense local incentives} are often superior to \textbf{sparse global penalties}. While intuitive to design rewards around the "ultimate goal" (saving the forest), the difficulty of credit assignment can hinder learning. Future work should explore \textit{Curriculum Learning}, starting with greedy rewards and gradually introducing global penalties as the agents become proficient.
+This study demonstrates that in MARL applications for wildfire suppression, \textbf{dense local incentives} are superior to \textbf{sparse global penalties}. While it is intuitive to design rewards around the "ultimate goal" (saving the forest), the difficulty of credit assignment can hinder learning. 
 
 \end{document}
