@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.7.10)  22 NOV 2025 14:31
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.7.10)  23 NOV 2025 01:24
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -373,44 +373,54 @@ Package hyperref Info: Link coloring OFF on input line 22.
  [1
 
 {/usr/local/texlive/2023/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
-<all_plot_damage.png, id=60, 739.563pt x 399.4122pt>
+<all_plot_damage.png, id=64, 739.563pt x 399.4122pt>
 File: all_plot_damage.png Graphic file (type png)
 <use all_plot_damage.png>
-Package pdftex.def Info: all_plot_damage.png  used on input line 66.
-(pdftex.def)             Requested size: 407.66833pt x 220.17104pt.
-<all_plot_speed.png, id=63, 739.563pt x 455.0601pt>
+Package pdftex.def Info: all_plot_damage.png  used on input line 70.
+(pdftex.def)             Requested size: 217.42265pt x 117.42334pt.
+<final_damage_comparison.png, id=66, 620.7993pt x 395.3169pt>
+File: final_damage_comparison.png Graphic file (type png)
+<use final_damage_comparison.png>
+Package pdftex.def Info: final_damage_comparison.png  used on input line 75.
+(pdftex.def)             Requested size: 217.42265pt x 138.44742pt.
+<all_plot_speed.png, id=68, 739.563pt x 455.0601pt>
 File: all_plot_speed.png Graphic file (type png)
 <use all_plot_speed.png>
-Package pdftex.def Info: all_plot_speed.png  used on input line 77.
-(pdftex.def)             Requested size: 407.66833pt x 250.84627pt.
- [2 <./all_plot_damage.png>]
-<plot_efficiency.png, id=75, 627.5445pt x 455.0601pt>
+Package pdftex.def Info: all_plot_speed.png  used on input line 89.
+(pdftex.def)             Requested size: 217.42265pt x 133.78328pt.
+<final_supression_curve.png, id=69, 729.927pt x 395.3169pt>
+File: final_supression_curve.png Graphic file (type png)
+<use final_supression_curve.png>
+Package pdftex.def Info: final_supression_curve.png  used on input line 94.
+(pdftex.def)             Requested size: 217.42265pt x 117.7515pt.
+ [2 <./all_plot_damage.png> <./final_damage_comparison.png>]
+<plot_efficiency.png, id=84, 627.5445pt x 455.0601pt>
 File: plot_efficiency.png Graphic file (type png)
 <use plot_efficiency.png>
-Package pdftex.def Info: plot_efficiency.png  used on input line 89.
+Package pdftex.def Info: plot_efficiency.png  used on input line 108.
 (pdftex.def)             Requested size: 217.42265pt x 157.66249pt.
-<plot_risk.png, id=76, 638.8668pt x 401.8212pt>
-File: plot_risk.png Graphic file (type png)
-<use plot_risk.png>
-Package pdftex.def Info: plot_risk.png  used on input line 95.
-(pdftex.def)             Requested size: 217.42265pt x 136.74615pt.
- [3 <./all_plot_speed.png> <./plot_efficiency.png> <./plot_risk.png>] [4] (./main.aux)
+<plot_risk_density.png, id=85, 642.4803pt x 403.2666pt>
+File: plot_risk_density.png Graphic file (type png)
+<use plot_risk_density.png>
+Package pdftex.def Info: plot_risk_density.png  used on input line 114.
+(pdftex.def)             Requested size: 217.42265pt x 136.46887pt.
+ [3 <./all_plot_speed.png> <./final_supression_curve.png> <./plot_efficiency.png> <./plot_risk_density.png>] [4{/usr/local/texlive/2023/texmf-dist/fonts/enc/dvips/cm-super/cm-super-ts1.enc}] (./main.aux)
 Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: B705CA41A6D2E6EFAE7958DDDE8E4535;1393.
+(rerunfilecheck)             Checksum: 2AA27824712268F0DFE5E75E1F2456CD;1688.
  ) 
 Here is how much of TeX's memory you used:
- 10978 strings out of 476025
- 178949 string characters out of 5790017
- 1863388 words of memory out of 5000000
- 31288 multiletter control sequences out of 15000+600000
- 519939 words of font info for 59 fonts, out of 8000000 for 9000
+ 11000 strings out of 476025
+ 179544 string characters out of 5790017
+ 1862388 words of memory out of 5000000
+ 31304 multiletter control sequences out of 15000+600000
+ 520448 words of font info for 61 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 75i,9n,76p,1044b,522s stack positions out of 10000i,1000n,20000p,200000b,200000s
-</usr/local/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb>
-Output written on main.pdf (4 pages, 881843 bytes).
+ 75i,9n,76p,1175b,522s stack positions out of 10000i,1000n,20000p,200000b,200000s
+</usr/local/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1/public/cm-super/sfrm1095.pfb>
+Output written on main.pdf (4 pages, 1005395 bytes).
 PDF statistics:
- 130 PDF objects out of 1000 (max. 8388607)
- 99 compressed objects within 1 object stream
- 22 named destinations out of 1000 (max. 500000)
- 101 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 147 PDF objects out of 1000 (max. 8388607)
+ 109 compressed objects within 2 object streams
+ 24 named destinations out of 1000 (max. 500000)
+ 119 words of extra memory for PDF output out of 10000 (max. 10000000)
 

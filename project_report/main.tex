@@ -24,7 +24,7 @@
 \maketitle
 
 \begin{abstract}
-In Multi-Agent Reinforcement Learning (MARL) for disaster response, it is often assumed that penalizing agents for the global state of the disaster (e.g., total fire size) is necessary to induce cooperative behavior. We investigated this by training a squad of 3 helicopters in the FirecastRL environment using three distinct reward structures: \textit{Cooperative} (Global Penalty), \textit{Greedy} (Local Reward only), and \textit{Curriculum} (Gradual transition). Contrary to the standard hypothesis, the Greedy agents significantly outperformed the Cooperative agents, reducing the average burnt area by $\approx 14\%$. However, the Greedy approach exhibited high variance. The Curriculum Learning approach successfully bridged the gap, offering a balance between performance and stability. This result suggests that in high-dimensional spatial environments, dense local feedback is a more effective learning signal than sparse global objectives.
+In Multi-Agent Reinforcement Learning (MARL) for disaster response, designing effective reward structures is a critical challenge. We investigated this by training a squad of 3 helicopters in the \texttt{FirecastRL} environment using multiple strategies: \textit{Cooperative} (Global Penalty), \textit{Greedy} (Local Reward), \textit{Curriculum Learning}, and advanced architectures including \textit{CNN Vision} (V3) and \textit{Distance Shaping} ("Heat Seeker" V4). Contrary to the standard hypothesis, pure Cooperative agents failed to contain the fire due to the credit assignment problem. The Greedy approach significantly outperformed them, reducing burnt area by $\approx 14\%$. Further experiments with CNNs and distance-based shaping improved agent tracking behavior but revealed a fundamental limitation in the discrete action space, leading to "wall-hugging" behavior. Our results suggest that in high-dimensional spatial environments, dense local feedback is superior to sparse global objectives, but solving the navigation problem requires continuous control.
 \end{abstract}
 
 \section{Introduction}
@@ -35,47 +35,66 @@ Wildfire suppression is a race against time. While single-agent RL has shown pro
 We utilized the \texttt{FirecastRL} environment modified to support multiple agents controlled by a centralized PPO policy (Stable-Baselines3). The state space includes a $160 \times 240$ grid of fire ignition times and agent coordinates. The action space is a \texttt{MultiDiscrete} vector.
 
 \subsection{Experimental Conditions}
-We trained three models for 100,000 timesteps each:
+We conducted four distinct experiments to isolate the drivers of agent performance:
 \begin{enumerate}
     \item \textbf{Cooperative Agent:} Received +10 for extinguishing, -2 for wasting water, and a global penalty of $-0.1 \times (\text{Total Burning Cells})$.
     \item \textbf{Greedy Agent:} Received +10 for extinguishing and -2 for wasting water. \textbf{Zero penalty} for fire spread. Agents only maximize individual hits.
     \item \textbf{Curriculum Agent:} Started with Greedy rewards to learn basic mechanics, linearly transitioning to Cooperative rewards over time.
+    \item \textbf{V3 (CNN Vision) \& V4 (Heat Seeker):} Addressed the "blindness" of flat-vector agents by reshaping inputs to $(1, H, W)$ for a Convolutional Neural Network (CNN) and adding distance-based reward shaping to lure agents toward the fire.
 \end{enumerate}
 
 \section{Results}
-We evaluated all models over 10 deterministic episodes. The Greedy strategy surprisingly yielded the lowest average damage.
+We evaluated all models over 10 deterministic episodes. The Greedy strategy surprisingly yielded the best raw performance, while advanced methods highlighted behavioral limitations.
 
 \begin{table}[h]
 \centering
 \begin{tabular}{|l|c|c|c|}
 \hline
-\textbf{Strategy} & \textbf{Avg Cells Burnt} ($\downarrow$) & \textbf{Reliability (Std Dev)} & \textbf{Avg Quenched} \\ \hline
-Cooperative & 1449.8 & 172.01 & 0.0 (Failed containment) \\ \hline
-\textbf{Greedy} & \textbf{1243.4} & 440.78 & 0.0 (Full containment) \\ \hline
-Curriculum & 1297.3 & 399.12 & 0.0 (Full containment) \\ \hline
+\textbf{Strategy} & \textbf{Avg Cells Burnt} ($\downarrow$) & \textbf{Reliability (Std Dev)} & \textbf{Avg Steps} \\ \hline
+Cooperative & 1449.8 & 172.01 & 728.1 \\ \hline
+\textbf{Greedy} & \textbf{1243.4} & 440.78 & 432.1 \\ \hline
+Curriculum & 1297.3 & 399.12 & 519.2 \\ \hline
+V3 (CNN Vision) & 1408.6 & 396.56 & 641.1 \\ \hline
+V4 (Heat Seeker) & 1323.2 & 417.72 & 582.2 \\ \hline
 \end{tabular}
-\caption{Comparative performance statistics. The Greedy agent saved the most forest on average.}
+\caption{Comparative performance statistics. Greedy agents saved the most forest, but Curriculum offered a middle-ground. Vision-based agents (V3/V4) struggled to outperform the simple Greedy vector policy.}
 \end{table}
 
 \subsection{Analysis of Damage (Final Impact)}
-As shown in Figure \ref{fig:damage}, the Cooperative agent converged to a sub-optimal solution (high damage), whereas the Greedy agent achieved a lower median damage. The Curriculum agent performed comparably to Greedy but with slightly lower variance.
+Figure \ref{fig:damage} compares the final burnt area distributions. The Greedy strategy (Orange) consistently resulted in fewer burnt cells compared to the Cooperative strategy. The Vision-based agents (V2, V3, V4) in Figure \ref{fig:damage}b show tight distributions but higher medians, indicating consistent but sub-optimal "wall-hugging" behavior.
 
 \begin{figure}[H]
     \centering
-    % Requires: all_plot_damage.png
-    \includegraphics[width=0.9\textwidth]{all_plot_damage.png}
-    \caption{\textbf{Total Fire Damage.} The boxplot illustrates that the Greedy strategy (Orange) and Curriculum (Green) consistently resulted in fewer burnt cells compared to the Cooperative strategy (Blue).}
+    \begin{subfigure}[b]{0.48\textwidth}
+        % Requires: all_plot_damage.png
+        \includegraphics[width=\textwidth]{all_plot_damage.png}
+        \caption{Vector Agents Comparison}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.48\textwidth}
+        % Requires: final_damage_comparison.png
+        \includegraphics[width=\textwidth]{final_damage_comparison.png}
+        \caption{Vision Agents Comparison (V2-V4)}
+    \end{subfigure}
+    \caption{\textbf{Total Fire Damage.} Left: The Greedy strategy outperforms Cooperative. Right: Advanced architectures reduced variance but failed to improve mean performance.}
     \label{fig:damage}
 \end{figure}
 
 \subsection{Suppression Dynamics (Speed)}
-Figure \ref{fig:speed} analyzes the active fire size over time. The Greedy and Curriculum agents show a steeper downward slope in active fire cells, indicating a faster reaction time compared to the hesitant Cooperative agents.
+Figure \ref{fig:speed} analyzes the active fire size over time. The Greedy agent (Left) shows a steep drop, indicating rapid extinguishment. In contrast, the Vision-based agents (Right) struggle to bring the fire curve down to zero, often plateauing as agents get stuck at the boundaries.
 
 \begin{figure}[H]
     \centering
-    % Requires: all_plot_speed.png
-    \includegraphics[width=0.9\textwidth]{all_plot_speed.png}
-    \caption{\textbf{Containment Trajectory.} Greedy and Curriculum agents extinguish the fire significantly faster.}
+    \begin{subfigure}[b]{0.48\textwidth}
+        % Requires: plot_speed.jpg (or all_plot_speed.png if you have it)
+        \includegraphics[width=\textwidth]{all_plot_speed.png}
+        \caption{Vector Agents Trajectory}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.48\textwidth}
+        % Requires: final_supression_curve.png
+        \includegraphics[width=\textwidth]{final_supression_curve.png}
+        \caption{Vision Agents Trajectory}
+    \end{subfigure}
+    \caption{\textbf{Containment Trajectory.} The Greedy agent (a) extinguishes fires quickly. The Vision agents (b) allow the fire to grow larger before stabilizing, confirming the navigation issues.}
     \label{fig:speed}
 \end{figure}
 
@@ -91,8 +110,8 @@ We examined the trade-off between episode duration and damage (Figure \ref{fig:e
         \label{fig:efficiency}
     \end{subfigure}
     \begin{subfigure}[b]{0.48\textwidth}
-        % Requires: plot_risk.png
-        \includegraphics[width=\textwidth]{plot_risk.png}
+        % Requires: plot_risk_density.png
+        \includegraphics[width=\textwidth]{plot_risk_density.png}
         \caption{Risk Density Profile}
         \label{fig:risk}
     \end{subfigure}
@@ -100,9 +119,17 @@ We examined the trade-off between episode duration and damage (Figure \ref{fig:e
 \end{figure}
 
 \section{Discussion}
-The failure of the Cooperative reward can be attributed to the \textbf{Signal-to-Noise Ratio}. The global penalty created too much noise for the agents to credit specific actions. The Greedy agent received a clean, dense signal ("I dropped water $\to$ I got points"), creating a direct cause-and-effect loop that was easier to learn. The Curriculum approach successfully utilized this by establishing basic competence before introducing global complexity.
+The failure of the Cooperative reward can be attributed to the \textbf{Signal-to-Noise Ratio}. The global penalty created too much noise for the agents to credit specific actions. The Greedy agent received a clean, dense signal ("I dropped water $\to$ I got points"), creating a direct cause-and-effect loop that was easier to learn. 
+
+\subsection{The "Blindness" and "Wall-Hugging" Phenomenon}
+In Experiments V3 and V4, we attempted to fix the agent's spatial awareness using CNNs and Distance Shaping.
+\begin{itemize}
+    \item \textbf{Vision (V3):} Giving the agent "eyes" (CNN) was insufficient. Without guidance, the agent could not distinguish the fire from background noise in the massive $160 \times 240$ grid.
+    \item \textbf{Heat Seeker (V4):} Adding distance rewards successfully lured agents toward the fire initially. However, agents still exhibited "wall-hugging" behavior later in the episode.
+\end{itemize}
+This suggests the limitation lies in the \textbf{Discrete Action Space} combined with the environment's physics (inertia). Once an agent hits a boundary, the discrete actions make it difficult to turn around smoothly, leading to a "stuck" state that no reward function can easily fix.
 
 \section{Conclusion}
-This study demonstrates that in MARL applications for wildfire suppression, \textbf{dense local incentives} are superior to \textbf{sparse global penalties}. While it is intuitive to design rewards around the "ultimate goal" (saving the forest), the difficulty of credit assignment can hinder learning. 
+This study demonstrates that in MARL applications for wildfire suppression, \textbf{dense local incentives (Greedy)} are superior to \textbf{sparse global penalties (Cooperative)}. While it is intuitive to design rewards around the "ultimate goal" (saving the forest), the difficulty of credit assignment hinders learning. Furthermore, we identified that solving the navigation problem in large grids requires more than just visual perception; future work should explore \textbf{Continuous Control} to overcome the mobility limitations observed in the discrete setting.
 
 \end{document}
